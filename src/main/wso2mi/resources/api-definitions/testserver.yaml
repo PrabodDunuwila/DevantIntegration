@@ -1,0 +1,13 @@
+openapi: 3.0.1
+info:
+  title: testserver
+  description: API Definition of testserver
+  version: 1.0.0
+servers:
+- url: http://localhost:8290/testserver
+paths:
+  /test:
+    get:
+      responses:
+        default:
+          description: Default response
