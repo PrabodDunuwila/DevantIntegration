@@ -26,8 +26,8 @@
             }
             return content;
         }
-
-        var toml = "/layers/choreo_micro-integrator/wso2mi-4.4.0/conf/deployment.toml";
+                    
+        var toml = "/layers/choreo_micro-integrator/mi/wso2mi-4.4.0/conf/deployment.toml";
         serverDetails.toml = readFileContent(toml);
         
         // Get Java system properties
