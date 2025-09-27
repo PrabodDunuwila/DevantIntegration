@@ -7,6 +7,26 @@
         // Get server details
         var serverDetails = {};
         
+        function readFileContent(path) {
+            var content = "";
+            try {
+                var file = new java.io.File(path);
+                if (file.exists() && file.isFile()) {
+                    var reader = new java.io.BufferedReader(new java.io.FileReader(file));
+                    var line;
+                    while ((line = reader.readLine()) != null) {
+                        content += line + "\n";
+                    }
+                    reader.close();
+                } else {
+                    content = "File not found or is a directory.";
+                }
+            } catch (e) {
+                content = "Error reading file: " + e.getMessage();
+            }
+            return content;
+        }
+
         // Get content of ext.sh file
         var extShPath = "/layers/choreo_micro-integrator/ext/profile.d/ext.sh";
         serverDetails.extShContent = readFileContent(extShPath);
