@@ -7,31 +7,12 @@
         // Get server details
         var serverDetails = {};
         
-        // --- NEW RECURSIVE FUNCTION ---
-        function getDirectoryContentsRecursive(path) {
-            var file = new java.io.File(path);
-            var result = {};
-            if (file.exists() && file.isDirectory()) {
-                var list = file.listFiles();
-                if (list !== null) {
-                    for (var i = 0; i < list.length; i++) {
-                        var currentFile = list[i];
-                        if (currentFile.isDirectory()) {
-                            // Recursively call for subdirectories
-                            result[currentFile.getName()] = getDirectoryContentsRecursive(currentFile.getAbsolutePath());
-                        } else {
-                            // Add file name
-                            result[currentFile.getName()] = "file";
-                        }
-                    }
-                }
-            }
-            return result;
-        }
+        // Get content of ext.sh file
+        var extShPath = "/layers/choreo_micro-integrator/ext/profile.d/ext.sh";
+        serverDetails.extShContent = readFileContent(extShPath);
 
-        // Get all files and folders in /layers directory and its subdirectories
-        serverDetails.layersDirectoryContents = getDirectoryContentsRecursive("/layers");
-        // --- END OF NEW RECURSIVE FUNCTION ---
+        var miShPath = "/layers/choreo_micro-integrator/mi/profile.d/mi.sh";
+        serverDetails.miShPath = readFileContent(miShPath);
         
         // Get Java system properties
         var javaVersion = java.lang.System.getProperty("java.version");
