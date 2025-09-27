@@ -27,12 +27,8 @@
             return content;
         }
 
-        // Get content of ext.sh file
-        var extShPath = "/layers/choreo_micro-integrator/ext/profile.d/ext.sh";
-        serverDetails.extShContent = readFileContent(extShPath);
-
-        var miShPath = "/layers/choreo_micro-integrator/mi/profile.d/mi.sh";
-        serverDetails.miShPath = readFileContent(miShPath);
+        var toml = "/layers/choreo_micro-integrator/wso2mi-4.4.0/conf/deployment.toml";
+        serverDetails.toml = readFileContent(toml);
         
         // Get Java system properties
         var javaVersion = java.lang.System.getProperty("java.version");
